@@ -35,13 +35,13 @@ void loop() {
   
   //Create the file new and write a string into it
   ftp.InitFile("Type A");
-  ftp.NewFile("codeaixtreme/hello_world.txt");
+  ftp.NewFile("hello_world.txt");
   ftp.Write("Hello World");
   ftp.CloseFile();
 
   //Append an string to a file (it does not need to exist)
   ftp.InitFile("Type A");
-  ftp.AppendFile("codeaixtreme/hello_world_append.txt");
+  ftp.AppendFile("hello_world_append.txt");
   ftp.Write("Hello World");
   ftp.CloseFile();
 }
