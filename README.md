@@ -1,2 +1,2 @@
-# esp32-ftp-client
+# FTP Client for the ESP32
 An FTP-Client for the ESP32

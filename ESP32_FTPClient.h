@@ -10,8 +10,8 @@ class ESP32_FTPClient
   char* passWord;
   char* serverAdress;
   unsigned char clientBuf[1500];
-  
   size_t bufferSize = 1500;
+  WiFiClient* GetDataClient();
   
   public:
   ESP32_FTPClient(char* _serverAdress, char* _userName, char* _passWord);
@@ -24,6 +24,6 @@ class ESP32_FTPClient
   void GetFTPAnswer (char* result = NULL, int offsetStart = 0);
   void GetLastModifiedTime(char* fileName, char* result);
   void RenameFile(char* from, char* to);
-  WiFiClient* GetDataClient();
+  void Write(char * str);
   void InitFile(char* type);
 };

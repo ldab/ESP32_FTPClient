@@ -72,6 +72,9 @@ void ESP32_FTPClient::CloseFile () {
   GetFTPAnswer();
 }
 
+void ESP32_FTPClient::Write(char * str) {
+  GetDataClient()->print(str);
+}
 
 void ESP32_FTPClient::CloseConnection() {
   client.println(F("QUIT"));
@@ -80,7 +83,7 @@ void ESP32_FTPClient::CloseConnection() {
 }
 
 void ESP32_FTPClient::OpenConnection() {
-Serial.print(F("Connecting to: "));
+  Serial.print(F("Connecting to: "));
   Serial.println(serverAdress);
   if (client.connect(serverAdress, 21)) {  // 21 = FTP server
     Serial.println(F("Command connected"));
@@ -123,7 +126,8 @@ void ESP32_FTPClient::NewFile (char* fileName) {
 }
 
 void ESP32_FTPClient::InitFile(char* type){
-  Serial.println("Send Type I");
+  Serial.print("Send ");
+  Serial.println(type);
   client.println(F(type));
   GetFTPAnswer();
 
