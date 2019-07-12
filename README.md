@@ -12,10 +12,11 @@ A FTP-Client for the ESP32
 
 ## TODO
 
-[ ] - List Dir contents test with different serves;
-[ ] - Implement download;
+- [ ] List Dir contents test with different serves;
+- [ ] Implement download;
 
 * For the uploading example we will use the GitHub Octocat, which binary file is [here](./src/octocat.h):
-![GitHub Octocat](https://github.githubassets.com/images/modules/logos_page/Octocat.png)
 
+ <img src="https://github.githubassets.com/images/modules/logos_page/Octocat.png" alt="Octocat" width="50%"> 
+ 
 * Originally forked from [https://github.com/blackcodetavern/ESP32_FTPClient](https://github.com/blackcodetavern/ESP32_FTPClient)
