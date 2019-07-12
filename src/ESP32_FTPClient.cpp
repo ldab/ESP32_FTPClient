@@ -11,7 +11,7 @@ WiFiClient* ESP32_FTPClient::GetDataClient() {
   return &dclient;
 }
 
-void ESP32_FTPClient::GetLastModifiedTime(char* fileName, char* result) {
+void ESP32_FTPClient::GetLastModifiedTime(const char  * fileName, char* result) {
   Serial.println("Send MDTM");
   client.print(F("MDTM "));
   client.println(F(fileName));
@@ -35,28 +35,34 @@ void ESP32_FTPClient::WriteClientBuffered(WiFiClient* cli, unsigned char * data,
   }
 }
 
-
 void ESP32_FTPClient::GetFTPAnswer (char* result, int offsetStart) {
-  byte respCode;
-  byte thisByte;
+  //byte thisByte;
   outCount = 0;
+
+  String response;
+
   while (!client.available()) delay(1);
 
   while (client.available()) {
-    thisByte = client.read();
-    if (outCount < 127) {
+    //thisByte = client.read();
+    response = client.readString();
+    response.toCharArray(outBuf, sizeof(outBuf));
+    /*if ( outCount < sizeof(outBuf) ) {
       outBuf[outCount] = thisByte;
       outCount++;
       outBuf[outCount] = 0;
-    }
+    }*/
   }
-  if(result != NULL){
-    Serial.println("Result start");
-    for(int i = offsetStart;i<21;i++){
+  if(result != NULL)
+  {
+    for(int i = offsetStart; i<sizeof(outBuf); i++)
+    {
       result[i] = outBuf[i - offsetStart];
     }
+    
     Serial.print("Result: ");
-    Serial.write(result);
+    //Serial.print(result);
+    Serial.print(response);
     Serial.println("Result end");
   }
 }
@@ -72,7 +78,7 @@ void ESP32_FTPClient::CloseFile () {
   GetFTPAnswer();
 }
 
-void ESP32_FTPClient::Write(char * str) {
+void ESP32_FTPClient::Write(const char * str) {
   GetDataClient()->print(str);
 }
 
@@ -118,14 +124,14 @@ void ESP32_FTPClient::RenameFile(char* from, char* to) {
   GetFTPAnswer();
 }
 
-void ESP32_FTPClient::NewFile (char* fileName) {
+void ESP32_FTPClient::NewFile (const char* fileName) {
   Serial.println("Send STOR");
   client.print(F("STOR "));
   client.println(F(fileName));
   GetFTPAnswer();
 }
 
-void ESP32_FTPClient::InitFile(char* type){
+void ESP32_FTPClient::InitFile(const char* type){
   Serial.print("Send ");
   Serial.println(type);
   client.println(F(type));
@@ -161,4 +167,32 @@ void ESP32_FTPClient::AppendFile (char* fileName) {
   client.print(F("APPE "));
   client.println(F(fileName));
   GetFTPAnswer();
+}
+
+void ESP32_FTPClient::ChangeWorkDir(const char * dir) {
+  Serial.println("Send CWD");
+  client.print(F("CWD "));
+  client.println(F(dir));
+  GetFTPAnswer();
+}
+
+void ESP32_FTPClient::DeleteFile(const char * file) {
+  Serial.println("Send DELE");
+  client.print(F("DELE "));
+  client.println(F(file));
+  GetFTPAnswer();
+}
+
+void ESP32_FTPClient::MakeDir(const char * dir) {
+  Serial.println("Send MKD");
+  client.print(F("MKD "));
+  client.println(F(dir));
+  GetFTPAnswer();
+}
+
+void ESP32_FTPClient::ContentList(const char * dir, char * list) {
+  Serial.println("Send MLSD");
+  client.print(F("MLSD "));
+  client.println(F(dir));
+  GetFTPAnswer(list);
 }
