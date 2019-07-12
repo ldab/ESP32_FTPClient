@@ -17,7 +17,7 @@ Distributed as-is; no warranty is given.
 #define WIFI_SSID ""
 #define WIFI_PASS ""
 
-char ftp_server[] = "ftp.drivehq.com";
+char ftp_server[] = "";
 char ftp_user[]   = "";
 char ftp_pass[]   = "";
 
@@ -40,26 +40,28 @@ void setup()
 
   ftp.OpenConnection();
 
-  // Get directory contentx
+  // Get directory content
   ftp.InitFile("Type A");
-  char list[256];
-  ftp.ContentList("/My Pictures/", list);
+  String list[128];
+  ftp.ChangeWorkDir("/public_html/zyro/gallery_gen/");
+  ftp.ContentList("", list);
   Serial.print("\nDirectory info: ");
-  Serial.println(list);
+  Serial.println(list[2]);
   ftp.CloseFile();
+
 
   // Make a new directory
   ftp.InitFile("Type A");
-  ftp.MakeDir("/jagua");  
+  ftp.MakeDir("/my_new_dir");  
   ftp.CloseFile();
 
   // Create the new file and send the image
-  ftp.InitFile("Type A");
-  ftp.ChangeWorkDir("/wwwhome/images");
-  ftp.NewFile("octocat.png");
+  ftp.InitFile("Type I");
+  ftp.ChangeWorkDir("/my_new_dir");
+  ftp.NewFile("octocat.jpg");
   ftp.WriteData( octocat_pic, sizeof(octocat_pic) );
   ftp.CloseFile();
-  
+
   // Create the file new and write a string into it
   ftp.InitFile("Type A");
   ftp.NewFile("hello_world.txt");

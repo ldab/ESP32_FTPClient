@@ -13,6 +13,7 @@ A FTP-Client for the ESP32
 ## TODO
 
 - [ ] List Dir contents test with different serves;
+- [ ] Implement `FEAT` in order to choose which mode to list dir...
 - [ ] Implement download;
 
 * For the uploading example we will use the GitHub Octocat, which binary file is [here](./src/octocat.h):

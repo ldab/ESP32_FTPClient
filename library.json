@@ -1,6 +1,6 @@
 {
   "name": "esp32_ftpclient",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A FTP-Client for the ESP32",
   "keywords": "sensors, low power, mobile, ftp, web, cloud, iot, esp32, espressif",
   "authors":

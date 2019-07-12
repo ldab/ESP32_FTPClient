@@ -36,33 +36,25 @@ void ESP32_FTPClient::WriteClientBuffered(WiFiClient* cli, unsigned char * data,
 }
 
 void ESP32_FTPClient::GetFTPAnswer (char* result, int offsetStart) {
-  //byte thisByte;
+  char thisByte;
   outCount = 0;
-
-  String response;
-
   while (!client.available()) delay(1);
 
   while (client.available()) {
-    //thisByte = client.read();
-    response = client.readString();
-    response.toCharArray(outBuf, sizeof(outBuf));
-    /*if ( outCount < sizeof(outBuf) ) {
+    thisByte = client.read();
+    if (outCount < sizeof(outBuf)) {
       outBuf[outCount] = thisByte;
       outCount++;
       outBuf[outCount] = 0;
-    }*/
+    }
   }
-  if(result != NULL)
-  {
-    for(int i = offsetStart; i<sizeof(outBuf); i++)
-    {
+  if(result != NULL){
+    Serial.println("Result start");
+    for(int i = offsetStart; i<sizeof(outBuf); i++){
       result[i] = outBuf[i - offsetStart];
     }
-    
     Serial.print("Result: ");
-    //Serial.print(result);
-    Serial.print(response);
+    Serial.write(result);
     Serial.println("Result end");
   }
 }
@@ -190,9 +182,31 @@ void ESP32_FTPClient::MakeDir(const char * dir) {
   GetFTPAnswer();
 }
 
-void ESP32_FTPClient::ContentList(const char * dir, char * list) {
+void ESP32_FTPClient::ContentList(const char * dir, String * list) {
+  char _resp[ sizeof(outBuf) ];
+  uint16_t _b = 0;
+  
   Serial.println("Send MLSD");
-  client.print(F("MLSD "));
+  client.print(F("MLSD"));
   client.println(F(dir));
-  GetFTPAnswer(list);
+  GetFTPAnswer(_resp);
+
+  // Convert char array to string to manipulate and find response size
+  // each server reports it differently, TODO = FEAT
+  //String resp_string = _resp;
+  //resp_string.substring(resp_string.lastIndexOf('matches')-9);
+  //Serial.println(resp_string);
+
+  while( !dclient.available() ) delay(1);
+
+  while(dclient.available()) 
+  {
+    if( _b < 128 )
+    {
+      list[_b] = dclient.readStringUntil('\n');
+      //Serial.println(String(_b) + ":" + list[_b]);
+      _b++;
+    }
+  }
+
 }

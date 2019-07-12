@@ -2,7 +2,7 @@ class ESP32_FTPClient
 {
   private:
   void WriteClientBuffered(WiFiClient* cli, unsigned char * data, int dataLength);
-  char outBuf[256];
+  char outBuf[128];
   unsigned char outCount;
   WiFiClient client;
   WiFiClient dclient;
@@ -29,5 +29,5 @@ class ESP32_FTPClient
   void ChangeWorkDir(const char * dir);
   void DeleteFile(const char * file);
   void MakeDir(const char * dir);
-  void ContentList(const char * dir, char * list);
+  void ContentList(const char * dir, String * list);
 };
