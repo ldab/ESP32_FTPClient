@@ -30,4 +30,6 @@ class ESP32_FTPClient
   void DeleteFile(const char * file);
   void MakeDir(const char * dir);
   void ContentList(const char * dir, String * list);
+  void DownloadString(const char * filename, String &str);
+  void DownloadFile(const char * filename, unsigned char * buf, size_t length, bool printUART = false);
 };

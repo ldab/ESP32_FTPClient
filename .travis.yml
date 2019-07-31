@@ -25,6 +25,7 @@ cache:
 
 env:
     - PLATFORMIO_CI_SRC=examples/upload_image/upload_image.ino
+    - PLATFORMIO_CI_SRC=examples/download_file/download_file.ino
 
 install:
     - pip install -U platformio

@@ -38,6 +38,7 @@ void ESP32_FTPClient::WriteClientBuffered(WiFiClient* cli, unsigned char * data,
 void ESP32_FTPClient::GetFTPAnswer (char* result, int offsetStart) {
   char thisByte;
   outCount = 0;
+
   while (!client.available()) delay(1);
 
   while (client.available()) {
@@ -209,4 +210,49 @@ void ESP32_FTPClient::ContentList(const char * dir, String * list) {
     }
   }
 
+}
+
+void ESP32_FTPClient::DownloadString(const char * filename, String &str) {
+  Serial.println("Send RETR");
+  client.print(F("RETR "));
+  client.println(F(filename));
+
+  char _resp[ sizeof(outBuf) ];
+  GetFTPAnswer(_resp);
+
+  while( !GetDataClient()->available() ) delay(1);
+  
+  while( GetDataClient()->available() )
+  {
+    str += GetDataClient()->readString();
+  }
+
+}
+
+void ESP32_FTPClient::DownloadFile(const char * filename, unsigned char * buf, size_t length, bool printUART ) {
+  Serial.println("Send RETR");
+  client.print(F("RETR "));
+  client.println(F(filename));
+  
+  char _resp[ sizeof(outBuf) ];    
+  GetFTPAnswer(_resp);
+
+  char _buf[2];
+
+  while( !dclient.available() ) delay(1);
+
+  while(dclient.available()) 
+  {
+    if( !printUART ) 
+      dclient.readBytes(buf, length);
+
+    else
+    {
+      for(size_t _b = 0; _b < length; _b++ )
+      {
+        dclient.readBytes(_buf, 1),
+        Serial.print(_buf[0], HEX);
+      }
+    }
+  }
 }
