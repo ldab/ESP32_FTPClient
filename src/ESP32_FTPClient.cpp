@@ -138,10 +138,11 @@ void ESP32_FTPClient::InitFile(const char* type){
   int array_pasv[6];
   for ( int i = 0; i < 6; i++) {
     tStr = strtok(NULL, "(,");
-    array_pasv[i] = atoi(tStr);
     if (tStr == NULL) {
       Serial.println(F("Bad PASV Answer"));
+      break;
     }
+    array_pasv[i] = atoi(tStr);
   }
   unsigned int hiPort, loPort;
   hiPort = array_pasv[4] << 8;
