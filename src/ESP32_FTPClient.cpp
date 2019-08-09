@@ -1,10 +1,11 @@
 #include <WiFiClient.h>
 #include "ESP32_FTPClient.h"
 
-ESP32_FTPClient::ESP32_FTPClient(char* _serverAdress, char* _userName, char* _passWord){
+ESP32_FTPClient::ESP32_FTPClient(char* _serverAdress, char* _userName, char* _passWord, uint16_t _timeout){
   userName = _userName;
   passWord = _passWord;
   serverAdress = _serverAdress;
+  timeout = _timeout;
 }
 
 WiFiClient* ESP32_FTPClient::GetDataClient() {
@@ -39,7 +40,8 @@ void ESP32_FTPClient::GetFTPAnswer (char* result, int offsetStart) {
   char thisByte;
   outCount = 0;
 
-  while (!client.available()) delay(1);
+  unsigned long _m = millis();
+  while (!client.available() && millis() < _m + timeout) delay(1);
 
   while (client.available()) {
     thisByte = client.read();
@@ -84,7 +86,7 @@ void ESP32_FTPClient::CloseConnection() {
 void ESP32_FTPClient::OpenConnection() {
   Serial.print(F("Connecting to: "));
   Serial.println(serverAdress);
-  if (client.connect(serverAdress, 21)) {  // 21 = FTP server
+  if (client.connect(serverAdress, 21, timeout)) {  // 21 = FTP server
     Serial.println(F("Command connected"));
   } 
   GetFTPAnswer();
@@ -198,8 +200,9 @@ void ESP32_FTPClient::ContentList(const char * dir, String * list) {
   //String resp_string = _resp;
   //resp_string.substring(resp_string.lastIndexOf('matches')-9);
   //Serial.println(resp_string);
-
-  while( !dclient.available() ) delay(1);
+  
+  unsigned long _m = millis();
+  while( !dclient.available() && millis() < _m + timeout) delay(1);
 
   while(dclient.available()) 
   {
@@ -221,7 +224,8 @@ void ESP32_FTPClient::DownloadString(const char * filename, String &str) {
   char _resp[ sizeof(outBuf) ];
   GetFTPAnswer(_resp);
 
-  while( !GetDataClient()->available() ) delay(1);
+  unsigned long _m = millis();
+  while( !GetDataClient()->available() && millis() < _m + timeout) delay(1);
   
   while( GetDataClient()->available() )
   {
@@ -240,7 +244,8 @@ void ESP32_FTPClient::DownloadFile(const char * filename, unsigned char * buf, s
 
   char _buf[2];
 
-  while( !dclient.available() ) delay(1);
+  unsigned long _m = millis();
+  while( !dclient.available() && millis() < _m + timeout) delay(1);
 
   while(dclient.available()) 
   {

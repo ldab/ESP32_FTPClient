@@ -8,7 +8,7 @@ https://github.com/ldab/ESP32_FTPClient
 Distributed as-is; no warranty is given.
 
 ******************************************************************************/
-
+#include "Arduino.h"
 #include <WiFi.h>
 #include <WiFiClient.h> 
 #include <ESP32_FTPClient.h>
@@ -45,19 +45,22 @@ void setup()
   String list[128];
   ftp.ChangeWorkDir("/public_html/zyro/gallery_gen/");
   ftp.ContentList("", list);
-  Serial.print("\nDirectory info: ");
-  Serial.println(list[2]);
-  ftp.CloseFile();
-
+  Serial.println("\nDirectory info: ");
+  for(int i = 0; i < sizeof(list); i++)
+  {
+    if(list[i].length() > 0)
+      Serial.println(list[i]);
+    else
+      break;
+  }
 
   // Make a new directory
   ftp.InitFile("Type A");
-  ftp.MakeDir("/my_new_dir");  
-  ftp.CloseFile();
+  ftp.MakeDir("my_new_dir");
 
   // Create the new file and send the image
+  ftp.ChangeWorkDir("my_new_dir");
   ftp.InitFile("Type I");
-  ftp.ChangeWorkDir("/my_new_dir");
   ftp.NewFile("octocat.jpg");
   ftp.WriteData( octocat_pic, sizeof(octocat_pic) );
   ftp.CloseFile();
