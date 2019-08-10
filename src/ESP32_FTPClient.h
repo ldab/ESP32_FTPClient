@@ -6,18 +6,37 @@ class ESP32_FTPClient
   unsigned char outCount;
   WiFiClient client;
   WiFiClient dclient;
+  uint8_t verbose;
+
+  template<typename T>
+  		void FTPdbg(T msg) {
+    	if(verbose == 2) Serial.print(msg);
+		}
+  
+  template<typename T>
+  		void FTPdbgn(T msg) {
+    	if(verbose == 2) Serial.println(msg);
+		}
+
+    template<typename T>
+    void FTPerr(T msg) {
+    if(verbose == 1 || verbose == 2) Serial.println(msg);
+  }
+
   char* userName;
   char* passWord;
   char* serverAdress;
+  bool _isConnected = false;
   unsigned char clientBuf[1500];
   size_t bufferSize = 1500;
   uint16_t timeout = 10000;
   WiFiClient* GetDataClient();
   
   public:
-  ESP32_FTPClient(char* _serverAdress, char* _userName, char* _passWord, uint16_t _timeout = 10000);
+  ESP32_FTPClient(char* _serverAdress, char* _userName, char* _passWord, uint16_t _timeout = 10000, uint8_t _verbose = 1);
   void OpenConnection();
   void CloseConnection();
+  bool isConnected();
   void NewFile (const char* fileName);
   void AppendFile( char* fileName);
   void WriteData (unsigned char * data, int dataLength);
