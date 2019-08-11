@@ -114,8 +114,9 @@ void ESP32_FTPClient::CloseFile () {
 }
 
 void ESP32_FTPClient::Write(const char * str) {
+  FTPdbgn(F("Write File"));
   if(!isConnected()) return;
-
+  
   GetDataClient()->print(str);
 }
 
@@ -130,9 +131,9 @@ void ESP32_FTPClient::OpenConnection() {
   FTPdbgn(serverAdress);
   if (client.connect(serverAdress, 21, timeout)) {  // 21 = FTP server
     FTPdbgn(F("Command connected"));
-  } 
-  GetFTPAnswer();
+  }
   
+  GetFTPAnswer();
 
   FTPdbgn("Send USER");
   client.print(F("USER "));
@@ -171,6 +172,7 @@ void ESP32_FTPClient::NewFile (const char* fileName) {
 }
 
 void ESP32_FTPClient::InitFile(const char* type){
+  FTPdbgn("Send TYPE");
   if(!isConnected()) return;
   FTPdbgn(type);
   client.println(F(type));
@@ -186,7 +188,8 @@ void ESP32_FTPClient::InitFile(const char* type){
     tStr = strtok(NULL, "(,");
     if (tStr == NULL) {
       FTPdbgn(F("Bad PASV Answer"));
-      break;
+      CloseConnection();
+      return;
     }
     array_pasv[i] = atoi(tStr);
   }
@@ -197,7 +200,7 @@ void ESP32_FTPClient::InitFile(const char* type){
   FTPdbg(F("Data port: "));
   hiPort = hiPort | loPort;
   FTPdbgn(hiPort);
-  if (dclient.connect(serverAdress, hiPort)) {
+  if (dclient.connect(serverAdress, hiPort, timeout)) {
     FTPdbgn(F("Data connection established"));
   }
 }
