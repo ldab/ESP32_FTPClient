@@ -113,9 +113,10 @@ void ESP32_FTPClient::CloseFile () {
   GetFTPAnswer();
 }
 
-void ESP32_FTPClient::Write(const char * str) {  
+void ESP32_FTPClient::Write(const char * str) {
   FTPdbgn(F("Write File"));
   if(!isConnected()) return;
+  
   GetDataClient()->print(str);
 }
 
@@ -130,23 +131,21 @@ void ESP32_FTPClient::OpenConnection() {
   FTPdbgn(serverAdress);
   if (client.connect(serverAdress, 21, timeout)) {  // 21 = FTP server
     FTPdbgn(F("Command connected"));
-  } 
+  }
+  
   GetFTPAnswer();
 
   FTPdbgn("Send USER");
-  if(!isConnected()) return;
   client.print(F("USER "));
   client.println(F(userName));
   GetFTPAnswer();
 
   FTPdbgn("Send PASSWORD");
-  if(!isConnected()) return;
   client.print(F("PASS "));
   client.println(F(passWord));
   GetFTPAnswer();
   
   FTPdbgn("Send SYST");
-  if(!isConnected()) return;
   client.println(F("SYST"));
   GetFTPAnswer();
 }
@@ -159,7 +158,6 @@ void ESP32_FTPClient::RenameFile(char* from, char* to) {
   GetFTPAnswer();
 
   FTPdbgn("Send RNTO");
-  if(!isConnected()) return;
   client.print(F("RNTO "));
   client.println(F(to));
   GetFTPAnswer();
@@ -181,11 +179,8 @@ void ESP32_FTPClient::InitFile(const char* type){
   GetFTPAnswer();
 
   FTPdbgn("Send PASV");
-  if(!isConnected()) return;
   client.println(F("PASV"));
   GetFTPAnswer();
-
-  if(!isConnected()) return;
 
   char *tStr = strtok(outBuf, "(,");
   int array_pasv[6];
@@ -193,11 +188,7 @@ void ESP32_FTPClient::InitFile(const char* type){
     tStr = strtok(NULL, "(,");
     if (tStr == NULL) {
       FTPdbgn(F("Bad PASV Answer"));
-      client.println(F("QUIT"));  //close the connection
-      client.stop();
-      FTPdbgn(F("Connection closed"));
-      _isConnected = false;
-      isConnected();
+      CloseConnection();
       return;
     }
     array_pasv[i] = atoi(tStr);
@@ -209,7 +200,7 @@ void ESP32_FTPClient::InitFile(const char* type){
   FTPdbg(F("Data port: "));
   hiPort = hiPort | loPort;
   FTPdbgn(hiPort);
-  if (dclient.connect(serverAdress, hiPort)) {
+  if (dclient.connect(serverAdress, hiPort, timeout)) {
     FTPdbgn(F("Data connection established"));
   }
 }
@@ -256,8 +247,6 @@ void ESP32_FTPClient::ContentList(const char * dir, String * list) {
   client.println(F(dir));
   GetFTPAnswer(_resp);
 
-  if(!isConnected()) return;
-
   // Convert char array to string to manipulate and find response size
   // each server reports it differently, TODO = FEAT
   //String resp_string = _resp;
@@ -288,8 +277,6 @@ void ESP32_FTPClient::DownloadString(const char * filename, String &str) {
   char _resp[ sizeof(outBuf) ];
   GetFTPAnswer(_resp);
 
-  if(!isConnected()) return;
-
   unsigned long _m = millis();
   while( !GetDataClient()->available() && millis() < _m + timeout) delay(1);
   
@@ -308,8 +295,6 @@ void ESP32_FTPClient::DownloadFile(const char * filename, unsigned char * buf, s
   
   char _resp[ sizeof(outBuf) ];    
   GetFTPAnswer(_resp);
-
-  if(!isConnected()) return;
 
   char _buf[2];
 
