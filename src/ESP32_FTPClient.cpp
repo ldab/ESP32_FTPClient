@@ -18,6 +18,7 @@ bool ESP32_FTPClient::isConnected(){
   {
     FTPerr("FTP error: ");
     FTPerr(outBuf);
+    FTPerr("\n");
   }
 
   return _isConnected;
@@ -56,6 +57,15 @@ void ESP32_FTPClient::GetFTPAnswer (char* result, int offsetStart) {
   unsigned long _m = millis();
   while (!client.available() && millis() < _m + timeout) delay(1);
 
+  if( !client.available()){
+    memset( outBuf, 0, sizeof(outBuf) );
+    strcpy( outBuf, "Offline");
+
+    _isConnected = false;
+    isConnected();
+    return;
+  }
+
   while (client.available()) {
     thisByte = client.read();
     if (outCount < sizeof(outBuf)) {
@@ -64,8 +74,8 @@ void ESP32_FTPClient::GetFTPAnswer (char* result, int offsetStart) {
       outBuf[outCount] = 0;
     }
   }
-  
-  if(outBuf[0] == '4' || outBuf[0] == '5'){
+
+  if(outBuf[0] == '4' || outBuf[0] == '5' ){
     _isConnected = false;
     isConnected();
     return;
@@ -74,9 +84,10 @@ void ESP32_FTPClient::GetFTPAnswer (char* result, int offsetStart) {
   {
     _isConnected = true;
   }
-
+  
   if(result != NULL){
     FTPdbgn("Result start");
+    // Deprecated
     for(int i = offsetStart; i<sizeof(outBuf); i++){
       result[i] = outBuf[i - offsetStart];
     }
@@ -160,7 +171,6 @@ void ESP32_FTPClient::NewFile (const char* fileName) {
 }
 
 void ESP32_FTPClient::InitFile(const char* type){
-  FTPdbg("Send ");
   if(!isConnected()) return;
   FTPdbgn(type);
   client.println(F(type));

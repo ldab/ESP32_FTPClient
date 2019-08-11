@@ -21,7 +21,8 @@ char ftp_server[] = "";
 char ftp_user[]   = "";
 char ftp_pass[]   = "";
 
-ESP32_FTPClient ftp (ftp_server,ftp_user,ftp_pass);
+// you can pass a FTP timeout and debbug mode on the last 2 arguments
+ESP32_FTPClient ftp (ftp_server,ftp_user,ftp_pass, 5000, 2);
 
 void setup()
 {

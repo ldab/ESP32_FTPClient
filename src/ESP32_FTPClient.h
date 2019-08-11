@@ -20,7 +20,7 @@ class ESP32_FTPClient
 
     template<typename T>
     void FTPerr(T msg) {
-    if(verbose == 1 || verbose == 2) Serial.println(msg);
+    if(verbose == 1 || verbose == 2) Serial.print(msg);
   }
 
   char* userName;
