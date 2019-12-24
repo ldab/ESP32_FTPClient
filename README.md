@@ -11,7 +11,7 @@ A FTP-Client for the ESP32
 * The main purpose of this library was to upload pictures from ESP32-CAM to a website making the picture available on a http url, as seen here [https://github.com/ldab/ESP32-CAM-Picture-Sharing](https://github.com/ldab/ESP32-CAM-Picture-Sharing), making it usuable on `Blynk` or on your webiste.
 
 [![Add New Feature (Uplaod File from SPIFFS)]
-SPIFFS configuration :
+* SPIFFS configuration :
 - https://randomnerdtutorials.com/install-esp32-filesystem-uploader-arduino-ide/SPIFFS
 Documentation about filestream
 - https://github.com/espressif/arduino-esp32/blob/master/libraries/FS/src/FS.cpp
