@@ -12,8 +12,8 @@ A FTP-Client for the ESP32
 
 [![Add New Feature (Uplaod File from SPIFFS)]
 SPIFFS configuration :
-- https://randomnerdtutorials.com/install-esp32-filesystem-uploader-arduino-ide/
-SPIFFS
+- https://randomnerdtutorials.com/install-esp32-filesystem-uploader-arduino-ide/SPIFFS
+Documentation about filestream
 - https://github.com/espressif/arduino-esp32/blob/master/libraries/FS/src/FS.cpp
 - https://github.com/espressif/arduino-esp32/blob/master/libraries/FS/src/FS.h
 
