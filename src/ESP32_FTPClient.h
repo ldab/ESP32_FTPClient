@@ -31,6 +31,8 @@ class ESP32_FTPClient
   size_t bufferSize = 1500;
   uint16_t timeout = 10000;
   WiFiClient* GetDataClient();
+  //Buffer for stream data
+  uint8_t streambuffer[1024];
 
   public:
   ESP32_FTPClient(char* _serverAdress, char* _userName, char* _passWord, uint16_t _timeout = 10000, uint8_t _verbose = 1);
