@@ -12,7 +12,7 @@ class ESP32_FTPClient
   		void FTPdbg(T msg) {
     	if(verbose == 2) Serial.print(msg);
 		}
-  
+
   template<typename T>
   		void FTPdbgn(T msg) {
     	if(verbose == 2) Serial.println(msg);
@@ -31,7 +31,7 @@ class ESP32_FTPClient
   size_t bufferSize = 1500;
   uint16_t timeout = 10000;
   WiFiClient* GetDataClient();
-  
+
   public:
   ESP32_FTPClient(char* _serverAdress, char* _userName, char* _passWord, uint16_t _timeout = 10000, uint8_t _verbose = 1);
   void OpenConnection();
@@ -40,6 +40,7 @@ class ESP32_FTPClient
   void NewFile (const char* fileName);
   void AppendFile( char* fileName);
   void WriteData (unsigned char * data, int dataLength);
+  void WriteData (Stream * stream);
   void CloseFile ();
   void GetFTPAnswer (char* result = NULL, int offsetStart = 0);
   void GetLastModifiedTime(const char* fileName, char* result);

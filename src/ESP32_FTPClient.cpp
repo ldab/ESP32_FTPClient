@@ -41,12 +41,12 @@ void ESP32_FTPClient::WriteClientBuffered(WiFiClient* cli, unsigned char * data,
     //client.write(data[i])
     clientCount++;
     if (clientCount > bufferSize-1) {
-        cli->write(clientBuf, bufferSize); 
+        cli->write(clientBuf, bufferSize);
       clientCount = 0;
     }
   }
   if (clientCount > 0){
-      cli->write(clientBuf, clientCount); 
+      cli->write(clientBuf, clientCount);
   }
 }
 
@@ -84,7 +84,7 @@ void ESP32_FTPClient::GetFTPAnswer (char* result, int offsetStart) {
   {
     _isConnected = true;
   }
-  
+
   if(result != NULL){
     FTPdbgn("Result start");
     // Deprecated
@@ -104,10 +104,41 @@ void ESP32_FTPClient::WriteData (unsigned char * data, int dataLength) {
   WriteClientBuffered(&dclient, &data[0], dataLength);
 }
 
+/**
+ * WriteData
+ * @param stream Stream *       data stream to send
+ * @param size int           size for the data to send if 0 not data is send
+ * TODO @return -1 if no info or > 0 when data-Length is set to the server
+ * Doc about stream https://www.arduino.cc/reference/en/language/functions/communication/stream/
+ */
+void ESP32_FTPClient::WriteData (Stream * stream) {
+  FTPdbgn(F("Writing from Stream"));
+  if(!stream) {
+    FTPdbgn(F("Error Stream is unvaible"));
+    return;
+  }
+  if(!isConnected()) return;
+
+  // get available data size and intialize sizeAvailable variable
+  int sizeAvailable = stream->available();
+
+  FTPdbg(F("File Size from stream = "));
+  FTPdbgn(sizeAvailable);
+
+  //Algorithme to send available data from stream
+
+  while (sizeAvailable > 0) {
+    size_t len = std::min((int)(sizeof(streambuffer) - 1), sizeAvailable);
+    stream->readBytes(streambuffer, len);
+    WriteData( streambuffer, len);
+    sizeAvailable -= len;
+  }
+}
+
 void ESP32_FTPClient::CloseFile () {
   FTPdbgn(F("Close File"));
   dclient.stop();
-  
+
   if(!_isConnected) return;
 
   GetFTPAnswer();
@@ -116,7 +147,7 @@ void ESP32_FTPClient::CloseFile () {
 void ESP32_FTPClient::Write(const char * str) {
   FTPdbgn(F("Write File"));
   if(!isConnected()) return;
-  
+
   GetDataClient()->print(str);
 }
 
@@ -132,7 +163,7 @@ void ESP32_FTPClient::OpenConnection() {
   if (client.connect(serverAdress, 21, timeout)) {  // 21 = FTP server
     FTPdbgn(F("Command connected"));
   }
-  
+
   GetFTPAnswer();
 
   FTPdbgn("Send USER");
@@ -144,7 +175,7 @@ void ESP32_FTPClient::OpenConnection() {
   client.print(F("PASS "));
   client.println(F(passWord));
   GetFTPAnswer();
-  
+
   FTPdbgn("Send SYST");
   client.println(F("SYST"));
   GetFTPAnswer();
@@ -240,7 +271,7 @@ void ESP32_FTPClient::MakeDir(const char * dir) {
 void ESP32_FTPClient::ContentList(const char * dir, String * list) {
   char _resp[ sizeof(outBuf) ];
   uint16_t _b = 0;
-  
+
   FTPdbgn("Send MLSD");
   if(!isConnected()) return;
   client.print(F("MLSD"));
@@ -252,11 +283,11 @@ void ESP32_FTPClient::ContentList(const char * dir, String * list) {
   //String resp_string = _resp;
   //resp_string.substring(resp_string.lastIndexOf('matches')-9);
   //FTPdbgn(resp_string);
-  
+
   unsigned long _m = millis();
   while( !dclient.available() && millis() < _m + timeout) delay(1);
 
-  while(dclient.available()) 
+  while(dclient.available())
   {
     if( _b < 128 )
     {
@@ -279,7 +310,7 @@ void ESP32_FTPClient::DownloadString(const char * filename, String &str) {
 
   unsigned long _m = millis();
   while( !GetDataClient()->available() && millis() < _m + timeout) delay(1);
-  
+
   while( GetDataClient()->available() )
   {
     str += GetDataClient()->readString();
@@ -292,8 +323,8 @@ void ESP32_FTPClient::DownloadFile(const char * filename, unsigned char * buf, s
   if(!isConnected()) return;
   client.print(F("RETR "));
   client.println(F(filename));
-  
-  char _resp[ sizeof(outBuf) ];    
+
+  char _resp[ sizeof(outBuf) ];
   GetFTPAnswer(_resp);
 
   char _buf[2];
@@ -301,9 +332,9 @@ void ESP32_FTPClient::DownloadFile(const char * filename, unsigned char * buf, s
   unsigned long _m = millis();
   while( !dclient.available() && millis() < _m + timeout) delay(1);
 
-  while(dclient.available()) 
+  while(dclient.available())
   {
-    if( !printUART ) 
+    if( !printUART )
       dclient.readBytes(buf, length);
 
     else
