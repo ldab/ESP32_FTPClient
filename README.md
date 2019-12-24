@@ -10,6 +10,8 @@ A FTP-Client for the ESP32
 
 * The main purpose of this library was to upload pictures from ESP32-CAM to a website making the picture available on a http url, as seen here [https://github.com/ldab/ESP32-CAM-Picture-Sharing](https://github.com/ldab/ESP32-CAM-Picture-Sharing), making it usuable on `Blynk` or on your webiste.
 
+[![Add New Feature ]](Uplaod File from SPIFFS)
+
 ## TODO
 
 - [ ] List Dir contents test with different serves;
@@ -38,6 +40,6 @@ As mentioned [here](https://github.com/espressif/arduino-esp32/issues/1163) and 
 
 * For the uploading example we will use the GitHub Octocat, which binary file is [here](./src/octocat.h):
 
- <img src="https://github.githubassets.com/images/modules/logos_page/Octocat.png" alt="Octocat" width="50%"> 
- 
+ <img src="https://github.githubassets.com/images/modules/logos_page/Octocat.png" alt="Octocat" width="50%">
+
 * Originally forked from [https://github.com/blackcodetavern/ESP32_FTPClient](https://github.com/blackcodetavern/ESP32_FTPClient)
