@@ -197,10 +197,12 @@ void ESP32_FTPClient::InitFile(const char* type){
   hiPort = array_pasv[4] << 8;
   loPort = array_pasv[5] & 255;
 
+  IPAddress pasvServer(array_pasv[0],array_pasv[1],array_pasv[2],array_pasv[3]);
+
   FTPdbg(F("Data port: "));
   hiPort = hiPort | loPort;
   FTPdbgn(hiPort);
-  if (dclient.connect(serverAdress, hiPort, timeout)) {
+  if (dclient.connect(pasvServer, hiPort, timeout)) {
     FTPdbgn(F("Data connection established"));
   }
 }
