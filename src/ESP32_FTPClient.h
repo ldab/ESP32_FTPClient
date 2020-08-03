@@ -26,6 +26,7 @@ class ESP32_FTPClient
   char* userName;
   char* passWord;
   char* serverAdress;
+  uint16_t port;
   bool _isConnected = false;
   unsigned char clientBuf[1500];
   size_t bufferSize = 1500;
@@ -33,6 +34,7 @@ class ESP32_FTPClient
   WiFiClient* GetDataClient();
   
   public:
+  ESP32_FTPClient(char* _serverAdress, uint16_t _port, char* _userName, char* _passWord, uint16_t _timeout = 10000, uint8_t _verbose = 1);
   ESP32_FTPClient(char* _serverAdress, char* _userName, char* _passWord, uint16_t _timeout = 10000, uint8_t _verbose = 1);
   void OpenConnection();
   void CloseConnection();

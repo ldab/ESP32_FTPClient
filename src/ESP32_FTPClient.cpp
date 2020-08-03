@@ -1,10 +1,20 @@
 #include <WiFiClient.h>
 #include "ESP32_FTPClient.h"
 
+ESP32_FTPClient::ESP32_FTPClient(char* _serverAdress, uint16_t _port, char* _userName, char* _passWord, uint16_t _timeout, uint8_t _verbose){
+  userName = _userName;
+  passWord = _passWord;
+  serverAdress = _serverAdress;
+  port = _port;
+  timeout = _timeout;
+  verbose = _verbose;
+}
+
 ESP32_FTPClient::ESP32_FTPClient(char* _serverAdress, char* _userName, char* _passWord, uint16_t _timeout, uint8_t _verbose){
   userName = _userName;
   passWord = _passWord;
   serverAdress = _serverAdress;
+  port = 21;
   timeout = _timeout;
   verbose = _verbose;
 }
@@ -129,7 +139,8 @@ void ESP32_FTPClient::CloseConnection() {
 void ESP32_FTPClient::OpenConnection() {
   FTPdbg(F("Connecting to: "));
   FTPdbgn(serverAdress);
-  if (client.connect(serverAdress, 21, timeout)) {  // 21 = FTP server
+  if( client.connect(serverAdress, port, timeout) )
+  {
     FTPdbgn(F("Command connected"));
   }
   
