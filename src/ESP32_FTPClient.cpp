@@ -281,6 +281,38 @@ void ESP32_FTPClient::ContentList(const char * dir, String * list) {
 
 }
 
+void ESP32_FTPClient::ContentListWithListCommand(const char * dir, String * list) {
+  char _resp[ sizeof(outBuf) ];
+  uint16_t _b = 0;
+  
+  FTPdbgn("Send LIST");
+  if(!isConnected()) return;
+  client.print(F("LIST"));
+  client.println(F(dir));
+  GetFTPAnswer(_resp);
+
+  // Convert char array to string to manipulate and find response size
+  // each server reports it differently, TODO = FEAT
+  //String resp_string = _resp;
+  //resp_string.substring(resp_string.lastIndexOf('matches')-9);
+  //FTPdbgn(resp_string);
+  
+  unsigned long _m = millis();
+  while( !dclient.available() && millis() < _m + timeout) delay(1);
+
+  while(dclient.available()) 
+  {
+    if( _b < 128 )
+    {
+      String tmp = dclient.readStringUntil('\n');
+      list[_b] = tmp.substring(tmp.lastIndexOf(" ") + 1, tmp.length());
+      //FTPdbgn(String(_b) + ":" + tmp);
+      _b++;
+    }
+  }
+
+}
+
 void ESP32_FTPClient::DownloadString(const char * filename, String &str) {
   FTPdbgn("Send RETR");
   if(!isConnected()) return;
